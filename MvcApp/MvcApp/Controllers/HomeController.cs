@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MvcApp.Data;
 using MvcApp.Models;
 using System.Diagnostics;
 
@@ -8,14 +10,22 @@ namespace MvcApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly MvcAppContext _context;
+
+        public HomeController(ILogger<HomeController> logger, MvcAppContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task <IActionResult> Index()
         {
-            return View();
+            var posts = await _context.Posts.ToListAsync();
+            var orderedPosts=from u in posts   
+                          orderby u.DateCreated descending
+                          select u;
+            var lastEight=orderedPosts.Take(8).ToList();
+            return View(lastEight);
         }
 
         public IActionResult Privacy()
