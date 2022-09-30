@@ -20,8 +20,13 @@ namespace MvcApp.Controllers
 
         public async Task <IActionResult> Index()
         {
+            
             var posts = await _context.Posts.ToListAsync();
-            var orderedPosts=from u in posts   
+            if (posts == null)
+            {
+                return BadRequest();
+            }
+                var orderedPosts=from u in posts   
                           orderby u.DateCreated descending
                           select u;
             var lastEight=orderedPosts.Take(8).ToList();

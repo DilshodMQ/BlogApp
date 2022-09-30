@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvcApp.Data;
 
@@ -11,9 +12,10 @@ using MvcApp.Data;
 namespace MvcApp.Migrations
 {
     [DbContext(typeof(MvcAppContext))]
-    partial class MvcAppContextModelSnapshot : ModelSnapshot
+    [Migration("20220930163913_Post_Model_Changed")]
+    partial class Post_Model_Changed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

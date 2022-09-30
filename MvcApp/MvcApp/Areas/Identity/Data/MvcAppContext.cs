@@ -12,6 +12,7 @@ public class MvcAppContext : IdentityDbContext<MvcAppUser>
     public MvcAppContext(DbContextOptions<MvcAppContext> options)
         : base(options)
     {
+       Database.EnsureCreated();
      
     }
 

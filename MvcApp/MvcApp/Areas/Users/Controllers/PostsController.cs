@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 using MvcApp.Models;
+using MvcApp.ViewModels;
 
 namespace MvcApp.Controllers
 {
@@ -59,14 +60,14 @@ namespace MvcApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content")] Post post)
+        public async Task<IActionResult> Create([Bind("Title,Content")] PostCreateViewModel post)
         {
             Post curPost = new Post();
             if (ModelState.IsValid)
             {
                 var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 
-                curPost.Id = post.Id;
+              
                 curPost.Title = post.Title;
                 curPost.Content = post.Content;
                 curPost.DateCreated=DateTime.Now;
@@ -99,34 +100,15 @@ namespace MvcApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Content")] PostCreateViewModel post)
         {
-            if (id != post.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostExists(post.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+           
+            var curPost = await _context.Posts.FirstAsync(p=>p.Id==id);
+            curPost.Title = post.Title;
+            curPost.Content = post.Content;
+            _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(post);
+          
         }
 
         // GET: Posts/Delete/5
