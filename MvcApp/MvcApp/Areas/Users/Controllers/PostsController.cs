@@ -65,6 +65,7 @@ namespace MvcApp.Controllers
             Post curPost = new Post();
             if (ModelState.IsValid)
             {
+                
                 var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 
               
