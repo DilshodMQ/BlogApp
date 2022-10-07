@@ -14,7 +14,7 @@ using MvcApp.ViewModels;
 namespace MvcApp.Controllers
 {
     [Area("Users")]
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class PostsController : Controller
     {
         private readonly MvcAppContext _context;
@@ -28,10 +28,12 @@ namespace MvcApp.Controllers
         public async Task<IActionResult> Index()
         {
             var curUserId=HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return View(_context.Posts.Where(p=>p.AuthorId==curUserId));
+            var userPosts = _context.Posts.Include(p => p.Status).Where(p =>p.AuthorId == curUserId);
+            return View(userPosts);
         }
 
         // GET: Posts/Details/5
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Posts == null)
@@ -39,7 +41,7 @@ namespace MvcApp.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts
+            var post = await _context.Posts.Include(p=>p.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
@@ -50,8 +52,12 @@ namespace MvcApp.Controllers
         }
 
         // GET: Posts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            
+            var statuses=_context.Statuses.Take(2);
+
+            ViewBag.Statuses = new SelectList(statuses, "Id", "Name");
             return View();
         }
 
@@ -60,7 +66,7 @@ namespace MvcApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Content")] PostCreateViewModel post)
+        public async Task<IActionResult> Create(int statusId, [Bind("Title,Content")] PostCreateViewModel post)
         {
             Post curPost = new Post();
             if (ModelState.IsValid)
@@ -73,13 +79,14 @@ namespace MvcApp.Controllers
                 curPost.Content = post.Content;
                 curPost.DateCreated=DateTime.Now;
                 curPost.AuthorId = curUserId;
+                curPost.StatusId = statusId;
                 _context.Add(curPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
         }
-
+     
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -93,6 +100,9 @@ namespace MvcApp.Controllers
             {
                 return NotFound();
             }
+            var statuses = _context.Statuses.Take(2);
+
+            ViewBag.Statuses = new SelectList(statuses, "Id", "Name");
             return View(post);
         }
 
@@ -101,12 +111,13 @@ namespace MvcApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Content")] PostCreateViewModel post)
+        public async Task<IActionResult> Edit(int id, int statusId, [Bind("Title,Content")] PostCreateViewModel post)
         {
            
             var curPost = await _context.Posts.FirstAsync(p=>p.Id==id);
             curPost.Title = post.Title;
             curPost.Content = post.Content;
+            curPost.StatusId = statusId;
             _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
           
@@ -130,28 +141,9 @@ namespace MvcApp.Controllers
             return View(post);
         }
 
-        // POST: Posts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Posts == null)
-            {
-                return Problem("Entity set 'ApplicationContext.Posts'  is null.");
-            }
-            var post = await _context.Posts.FindAsync(id);
-            if (post != null)
-            {
-                _context.Posts.Remove(post);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+       
+       
 
-        private bool PostExists(int id)
-        {
-          return _context.Posts.Any(e => e.Id == id);
-        }
+     
     }
 }

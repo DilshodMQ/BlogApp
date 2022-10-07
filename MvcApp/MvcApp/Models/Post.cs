@@ -20,6 +20,10 @@ namespace MvcApp.Models
        
         public string AuthorId { get; set; }
         public MvcAppUser Author { get; set; }
-       
+
+        public int StatusId { get; set; }
+
+        public Status Status { get; set; }
+
     }
 }

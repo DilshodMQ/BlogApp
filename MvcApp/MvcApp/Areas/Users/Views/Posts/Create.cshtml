@@ -1,4 +1,4 @@
-﻿@model MvcApp.Models.Post
+﻿@model MvcApp.ViewModels.PostCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -22,9 +22,13 @@
                 <input asp-for="Content" class="form-control" />
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div>
+                @Html.DropDownList("statusId", ViewBag.Statuses as SelectList)
             </div>
+            <div class="form-group">
+                <input type="submit" value="Save " class="btn btn-primary" />
+            </div>
+            
         </form>
     </div>
 </div>
