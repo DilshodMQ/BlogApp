@@ -17,10 +17,11 @@ namespace MvcApp.Models
         [DataType(DataType.DateTime)]
         public DateTime DateCreated { get; set; }
 
-       
+        [ForeignKey("Author")]
         public string AuthorId { get; set; }
         public MvcAppUser Author { get; set; }
 
+        [ForeignKey("Status")]
         public int StatusId { get; set; }
 
         public Status Status { get; set; }

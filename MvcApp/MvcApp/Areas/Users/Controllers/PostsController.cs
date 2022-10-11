@@ -11,7 +11,7 @@ using MvcApp.Data;
 using MvcApp.Models;
 using MvcApp.ViewModels;
 
-namespace MvcApp.Controllers
+namespace MvcApp.Areas.Users.Controllers
 {
     [Area("Users")]
     [Authorize(Roles = "User")]
@@ -52,13 +52,9 @@ namespace MvcApp.Controllers
         }
 
         // GET: Posts/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            
-            var statuses=_context.Statuses.Take(2);
-
-            ViewBag.Statuses = new SelectList(statuses, "Id", "Name");
-            return View();
+           return View();
         }
 
         // POST: Posts/Create
@@ -66,27 +62,39 @@ namespace MvcApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int statusId, [Bind("Title,Content")] PostCreateViewModel post)
+        public async Task<IActionResult> Create(string submitBtn, [Bind("Title,Content")] PostCreateViewModel post)
         {
-            Post curPost = new Post();
+            
             if (ModelState.IsValid)
             {
-                
+
                 var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                
-              
+
+                Post curPost = new Post();
                 curPost.Title = post.Title;
                 curPost.Content = post.Content;
-                curPost.DateCreated=DateTime.Now;
+                curPost.DateCreated = DateTime.Now;
                 curPost.AuthorId = curUserId;
-                curPost.StatusId = statusId;
-                _context.Add(curPost);
+                
+                switch (submitBtn)
+                {
+                    case "Create as draft":
+                        curPost.StatusId = (int)Enums.StatusesEnum.Draft;
+                        break;
+                    case "Submit to check":
+                        curPost.StatusId = (int)Enums.StatusesEnum.WaitingForApproval;
+                        break;
+                }
+                _context.Posts.Add(curPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
         }
-     
+
+
+       
+
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
