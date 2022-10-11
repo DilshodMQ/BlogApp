@@ -108,9 +108,10 @@ namespace MvcApp.Areas.Users.Controllers
             {
                 return NotFound();
             }
-            var statuses = _context.Statuses.Take(2);
-
-            ViewBag.Statuses = new SelectList(statuses, "Id", "Name");
+            if (post.StatusId == (int)Enums.StatusesEnum.WaitingForApproval)
+            {
+                return NotFound();
+            }
             return View(post);
         }
 
@@ -119,13 +120,21 @@ namespace MvcApp.Areas.Users.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int statusId, [Bind("Title,Content")] PostCreateViewModel post)
+        public async Task<IActionResult> Edit(int id, string submitBtn, [Bind("Title,Content")] PostCreateViewModel post)
         {
            
             var curPost = await _context.Posts.FirstAsync(p=>p.Id==id);
             curPost.Title = post.Title;
             curPost.Content = post.Content;
-            curPost.StatusId = statusId;
+            switch (submitBtn)
+            {
+                case "Save as draft":
+                    curPost.StatusId =(int) Enums.StatusesEnum.Draft;
+                    break;
+                case "Submit to check":
+                    curPost.StatusId =(int) Enums.StatusesEnum.WaitingForApproval;
+                    break;
+            }
             _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
           
@@ -149,9 +158,31 @@ namespace MvcApp.Areas.Users.Controllers
             return View(post);
         }
 
-       
-       
+        // POST: Posts/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Posts == null)
+            {
+                return Problem("Entity set 'ApplicationContext.Posts'  is null.");
+            }
+            var post = await _context.Posts.FindAsync(id);
+            if (post != null)
+            {
+                _context.Posts.Remove(post);
+            }
 
-     
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool PostExists(int id)
+        {
+            return _context.Posts.Any(e => e.Id == id);
+        }
+
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿@model MvcApp.Models.Post
+﻿@using MvcApp.Enums
+@model MvcApp.Models.Post
 
 @{
     ViewData["Title"] = "Details";
@@ -26,7 +27,7 @@
     </dl>
 </div>
 <div>
-    @if(Model.StatusId!=2)
+    @if(Model.StatusId!=(int)StatusesEnum.WaitingForApproval)
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> 
     }|

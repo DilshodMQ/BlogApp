@@ -22,10 +22,9 @@ namespace MvcApp.Controllers
         {
 
             var posts = await _context.Posts.Where(p => p.StatusId == 3).ToListAsync();
-            var orderedPosts = from u in posts
-                               orderby u.DateCreated descending
-                               select u;
-            var lastEight = orderedPosts.Take(8).ToList();
+            
+            var lastEight = posts.OrderByDescending(p => p.DateCreated).Take(8);
+
             return View(lastEight);
         }
 
