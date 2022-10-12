@@ -9,12 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddRazorPages();
+
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<MvcAppContext>(options => options.UseSqlServer(connection));
 
 builder.Services.AddDefaultIdentity<MvcAppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MvcAppContext>();
+
+//builder.Services.AddIdentity<MvcAppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MvcAppContext>().AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -34,13 +39,15 @@ app.UseAuthentication();;
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-      name: "areas",
-      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
-});
+app.MapAreaControllerRoute(
+    name: "MyUsersArea",
+    areaName: "Users",
+    pattern: "Users/{controller=Home}/{action=Index}/{id?}");
+
+app.MapAreaControllerRoute(
+    name: "MyAdminArea",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
