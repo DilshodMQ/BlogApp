@@ -24,17 +24,14 @@ namespace MvcApp.Services.Admin
             return post;
         }
 
-        public void Approve(int id)
+        public void Approve(Post post)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
             post.StatusId = (int)Enums.StatusesEnum.Published;
             _context.SaveChanges();
         }
 
-        public void Reject(int id)
+        public void Reject(Post post)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-
             post.StatusId = (int)Enums.StatusesEnum.Rejected;
             _context.SaveChanges();
         }

@@ -39,14 +39,16 @@ namespace MvcApp.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Approve(int id)
         {
-            _adminPostServices.Approve(id);
+            var post=_adminPostServices.GetById(id);    
+            _adminPostServices.Approve(post);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult Reject(int id)
         {
-            _adminPostServices.Reject(id);
+            var post = _adminPostServices.GetById(id);
+            _adminPostServices.Reject(post);
             return RedirectToAction("Index");
         }
     }

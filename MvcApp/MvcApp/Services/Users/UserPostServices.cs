@@ -18,7 +18,7 @@ namespace MvcApp.Services.Users
             var authorPosts = _context.Posts.Include(p => p.Status).Where(p => p.AuthorId == authorId);
             return authorPosts.ToList();
         }
-        public Post Details(int? id)
+        public Post Details(int id)
         {
             var post=_context.Posts.Include (p => p.Status).FirstOrDefault(p => p.Id == id);
             return post;
