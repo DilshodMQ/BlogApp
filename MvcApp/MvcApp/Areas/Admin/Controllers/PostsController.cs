@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 using MvcApp.Models;
+using MvcApp.Services.Admin;
+using MvcApp.Services.Users;
 
 namespace MvcApp.Areas.Admin.Controllers
 {
@@ -10,21 +12,23 @@ namespace MvcApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class PostsController : Controller
     {
-        private readonly MvcAppContext _context;
-
+        private AdminPostServices _adminPostServices;
         public PostsController(MvcAppContext context)
         {
-            _context = context;
+
+            _adminPostServices = new AdminPostServices(context);
+
         }
         public IActionResult Index()
         {
-            var posts = _context.Posts.Where(p => p.StatusId !=(int) Enums.StatusesEnum.Draft).ToList();
+            var posts = _adminPostServices.GetAll();
+
             return View(posts);
         }
 
         public IActionResult Details(int id)
         {
-            var post = _context.Posts.Include(p=>p.Status).FirstOrDefault(p=>p.Id == id);
+            var post = _adminPostServices.GetById(id);
             if(post == null)
             {
                 return NotFound();
@@ -35,19 +39,14 @@ namespace MvcApp.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Approve(int id)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-            post.StatusId =(int) Enums.StatusesEnum.Published;
-            _context.SaveChanges();
+            _adminPostServices.Approve(id);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult Reject(int id)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-            
-                post.StatusId = (int)Enums.StatusesEnum.Rejected;
-            _context.SaveChanges();
+            _adminPostServices.Reject(id);
             return RedirectToAction("Index");
         }
     }
