@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MvcApp.Models;
 using Microsoft.AspNetCore.Identity;
 using MvcApp.Data;
 using MvcApp.Areas.Identity.Data;

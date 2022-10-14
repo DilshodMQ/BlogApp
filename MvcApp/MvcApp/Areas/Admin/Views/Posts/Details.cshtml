@@ -49,6 +49,7 @@
                 async: true,
                 success: function (data) {
                     $("#btn1").text("Approved");
+                    $("#btn2").text("Reject");
                 },
                 error: function (data) {
                     alert("Error");
@@ -63,6 +64,7 @@
                 async: true,
                 success: function (data) {
                     $("#btn2").text("Rejected");
+                    $("#btn1").text("Approve");
                 },
             });
         }

@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using MvcApp.Data;
+using MvcApp.Enums;
 using MvcApp.Models;
+using MvcApp.Services.Users;
 using MvcApp.ViewModels;
 
 namespace MvcApp.Areas.Users.Controllers
@@ -17,32 +20,36 @@ namespace MvcApp.Areas.Users.Controllers
     [Authorize(Roles = "User")]
     public class PostsController : Controller
     {
-        private readonly MvcAppContext _context;
-
+       
+        private UserPostServices _userPostServices;
         public PostsController(MvcAppContext context)
         {
-            _context = context;
+            
+            _userPostServices=new UserPostServices(context);  
+
         }
+
+        
 
         // GET: Posts
         public async Task<IActionResult> Index()
         {
-            var curUserId=HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userPosts = _context.Posts.Include(p => p.Status).Where(p =>p.AuthorId == curUserId);
-            return View(userPosts);
+           var curUserId=HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+           var curUserPosts=_userPostServices.GetByAuthorId(curUserId);
+
+            return View(curUserPosts);
         }
 
         // GET: Posts/Details/5
         
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts.Include(p=>p.Status)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var post = _userPostServices.Details(id);
             if (post == null)
             {
                 return NotFound();
@@ -85,8 +92,8 @@ namespace MvcApp.Areas.Users.Controllers
                         curPost.StatusId = (int)Enums.StatusesEnum.WaitingForApproval;
                         break;
                 }
-                _context.Posts.Add(curPost);
-                await _context.SaveChangesAsync();
+                var addedPost = _userPostServices.AddPost(curPost);
+               
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
@@ -98,12 +105,12 @@ namespace MvcApp.Areas.Users.Controllers
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var post = _userPostServices.GetById(id.Value);
             if (post == null)
             {
                 return NotFound();
@@ -120,36 +127,66 @@ namespace MvcApp.Areas.Users.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string submitBtn, [Bind("Title,Content")] PostCreateViewModel post)
+        public async Task<IActionResult> Edit(int id, string submitBtn, [Bind("Title,Content")] PostEditViewModel postEditVM)
         {
-           
-            var curPost = await _context.Posts.FirstAsync(p=>p.Id==id);
-            curPost.Title = post.Title;
-            curPost.Content = post.Content;
-            switch (submitBtn)
+            
+
+            var curPost = _userPostServices.GetById(id);
+            if (ModelState.IsValid)
             {
-                case "Save as draft":
-                    curPost.StatusId =(int) Enums.StatusesEnum.Draft;
-                    break;
-                case "Submit to check":
-                    curPost.StatusId =(int) Enums.StatusesEnum.WaitingForApproval;
-                    break;
-            }
-            _context.SaveChanges();
+                try
+                {
+                    if (curPost == null)
+                    {
+                        return NotFound();
+                    }
+
+                    curPost.Title = postEditVM.Title;
+                    curPost.Content = postEditVM.Content;
+
+                    switch (submitBtn)
+                    {
+                        case "Save as draft":
+                            curPost.StatusId = (int)StatusesEnum.Draft;
+                            break;
+                        case "Submit to check":
+                            curPost.StatusId = (int)StatusesEnum.WaitingForApproval;
+                            break;
+                    }
+
+                    _userPostServices.EditPost(curPost);
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_userPostServices.PostExists(postEditVM.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
-          
+            }
+            return View(curPost);
+
         }
 
         // GET: Posts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var post = _userPostServices.GetById(id.Value);
+            if(post.StatusId==(int)StatusesEnum.WaitingForApproval)
+            {
+                return NotFound();
+            }
             if (post == null)
             {
                 return NotFound();
@@ -163,24 +200,16 @@ namespace MvcApp.Areas.Users.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Posts == null)
+            var post = _userPostServices.GetById(id);
+            if (post!=null)
             {
-                return Problem("Entity set 'ApplicationContext.Posts'  is null.");
+                _userPostServices.Delete(post);
             }
-            var post = await _context.Posts.FindAsync(id);
-            if (post != null)
-            {
-                _context.Posts.Remove(post);
-            }
-
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PostExists(int id)
-        {
-            return _context.Posts.Any(e => e.Id == id);
-        }
+       
 
 
 
