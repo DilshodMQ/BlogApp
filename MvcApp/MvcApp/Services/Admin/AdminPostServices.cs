@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 using MvcApp.Models;
+using MvcApp.Services.Interfaces;
 
 namespace MvcApp.Services.Admin
 {
-    public class AdminPostServices
+    public class AdminPostServices : IAdminPostServices
     {
         public MvcAppContext _context;
 

@@ -2,6 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MvcApp.Data;
 using MvcApp.Areas.Identity.Data;
+using MvcApp.Services.Interfaces;
+using MvcApp.Services.Admin;
+using MvcApp.Services.Users;
+using MvcApp.Services.Posts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +21,9 @@ builder.Services.AddDbContext<MvcAppContext>(options => options.UseSqlServer(con
 builder.Services.AddDefaultIdentity<MvcAppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MvcAppContext>();
-
-//builder.Services.AddIdentity<MvcAppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MvcAppContext>().AddDefaultTokenProviders();
+builder.Services.AddTransient<IAdminPostServices, AdminPostServices>();
+builder.Services.AddTransient<IUserPostServices, UserPostServices>();
+builder.Services.AddTransient<IPostServices, PostServices>();
 
 var app = builder.Build();
 

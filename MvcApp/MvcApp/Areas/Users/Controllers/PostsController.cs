@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using MvcApp.Data;
 using MvcApp.Enums;
 using MvcApp.Models;
+using MvcApp.Services.Interfaces;
 using MvcApp.Services.Users;
 using MvcApp.ViewModels;
 
@@ -21,11 +22,11 @@ namespace MvcApp.Areas.Users.Controllers
     public class PostsController : Controller
     {
        
-        private UserPostServices _userPostServices;
-        public PostsController(MvcAppContext context)
+        private IUserPostServices _userPostServices;
+        public PostsController(IUserPostServices userPostServices)
         {
-            
-            _userPostServices=new UserPostServices(context);  
+
+            _userPostServices = userPostServices; 
 
         }
 
@@ -208,10 +209,6 @@ namespace MvcApp.Areas.Users.Controllers
             
             return RedirectToAction(nameof(Index));
         }
-
-       
-
-
 
     }
 }

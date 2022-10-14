@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 using MvcApp.Models;
+using MvcApp.Services.Interfaces;
 
 namespace MvcApp.Services.Users
 {
-    public class UserPostServices
+    public class UserPostServices :IUserPostServices
     {
         public  MvcAppContext _context;
 

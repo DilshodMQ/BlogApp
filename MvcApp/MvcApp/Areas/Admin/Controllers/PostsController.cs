@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 using MvcApp.Models;
 using MvcApp.Services.Admin;
+using MvcApp.Services.Interfaces;
 using MvcApp.Services.Users;
 
 namespace MvcApp.Areas.Admin.Controllers
@@ -12,11 +13,11 @@ namespace MvcApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class PostsController : Controller
     {
-        private AdminPostServices _adminPostServices;
-        public PostsController(MvcAppContext context)
+        private IAdminPostServices _adminPostServices;
+        public PostsController(IAdminPostServices adminPostServices)
         {
 
-            _adminPostServices = new AdminPostServices(context);
+            _adminPostServices = adminPostServices;
 
         }
         public IActionResult Index()
