@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using MvcApp.Data;
 using MvcApp.Enums;
 using MvcApp.Models;
 using MvcApp.Services.Interfaces;
-using MvcApp.Services.Users;
 using MvcApp.ViewModels;
 
 namespace MvcApp.Areas.Users.Controllers

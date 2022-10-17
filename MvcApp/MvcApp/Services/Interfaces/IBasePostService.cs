@@ -2,10 +2,8 @@
 
 namespace MvcApp.Services.Interfaces
 {
-    public interface IPostService
+    public interface IBasePostService
     {
-         List<Post> GetLastEight();
-
         Post GetById(int id);
     }
 }

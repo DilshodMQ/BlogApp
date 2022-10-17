@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MvcApp.Data;
-using MvcApp.Models;
-using MvcApp.Services.Admin;
 using MvcApp.Services.Interfaces;
-using MvcApp.Services.Users;
+
 
 namespace MvcApp.Areas.Admin.Controllers
 {

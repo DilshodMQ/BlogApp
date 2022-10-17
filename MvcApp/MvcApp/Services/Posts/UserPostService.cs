@@ -2,16 +2,15 @@
 using MvcApp.Data;
 using MvcApp.Models;
 using MvcApp.Services.Interfaces;
+using MvcApp.Services.Posts;
 
 namespace MvcApp.Services.Users
 {
-    public class UserPostService :IUserPostService
+    public class UserPostService : BasePostService,IUserPostService
     {
-        public  MvcAppContext _context;
-
-        public  UserPostService(MvcAppContext context)
+        public UserPostService(MvcAppContext context):base(context)
         {
-           _context = context;
+           
         }
 
         public List<Post> GetByAuthorId (string authorId)
@@ -29,11 +28,6 @@ namespace MvcApp.Services.Users
         {
             _context.Posts.Add(post);
             _context.SaveChanges(); 
-            return post;
-        }
-        public Post GetById(int id)
-        {
-            var post = _context.Posts.Find(id);
             return post;
         }
 

@@ -6,13 +6,11 @@ using NuGet.Versioning;
 
 namespace MvcApp.Services.Posts
 {
-    public class PostService : IPostService
+    public class BlogPostService : BasePostService, IBlogPostService
     {
-        private readonly MvcAppContext _context;
-
-        public PostService(MvcAppContext context)
+        public BlogPostService(MvcAppContext context): base(context)    
         {
-            _context = context;
+          
         }
 
         public Post GetById(int id)
