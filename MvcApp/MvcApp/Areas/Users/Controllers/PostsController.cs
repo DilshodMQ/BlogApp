@@ -22,21 +22,17 @@ namespace MvcApp.Areas.Users.Controllers
     public class PostsController : Controller
     {
        
-        private IUserPostServices _userPostServices;
-        public PostsController(IUserPostServices userPostServices)
+        private IUserPostService _userPostService;
+        public PostsController(IUserPostService userPostService)
         {
-
-            _userPostServices = userPostServices; 
-
+            _userPostService = userPostService; 
         }
-
-        
 
         // GET: Posts
         public async Task<IActionResult> Index()
         {
            var curUserId=HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-           var curUserPosts=_userPostServices.GetByAuthorId(curUserId);
+           var curUserPosts=_userPostService.GetByAuthorId(curUserId);
 
             return View(curUserPosts);
         }
@@ -50,7 +46,7 @@ namespace MvcApp.Areas.Users.Controllers
                 return NotFound();
             }
 
-            var post = _userPostServices.Details(id);
+            var post = _userPostService.Details(id);
             if (post == null)
             {
                 return NotFound();
@@ -93,15 +89,13 @@ namespace MvcApp.Areas.Users.Controllers
                         curPost.StatusId = (int)Enums.StatusesEnum.WaitingForApproval;
                         break;
                 }
-                var addedPost = _userPostServices.AddPost(curPost);
+                var addedPost = _userPostService.AddPost(curPost);
                
                 return RedirectToAction(nameof(Index));
             }
             return View(post);
         }
 
-
-       
 
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -111,7 +105,7 @@ namespace MvcApp.Areas.Users.Controllers
                 return NotFound();
             }
 
-            var post = _userPostServices.GetById(id.Value);
+            var post = _userPostService.GetById(id.Value);
             if (post == null)
             {
                 return NotFound();
@@ -130,9 +124,7 @@ namespace MvcApp.Areas.Users.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string submitBtn, [Bind("Title,Content")] PostEditViewModel postEditVM)
         {
-            
-
-            var curPost = _userPostServices.GetById(id);
+            var curPost = _userPostService.GetById(id);
             if (ModelState.IsValid)
             {
                 try
@@ -155,12 +147,12 @@ namespace MvcApp.Areas.Users.Controllers
                             break;
                     }
 
-                    _userPostServices.EditPost(curPost);
+                    _userPostService.EditPost(curPost);
 
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_userPostServices.PostExists(postEditVM.Id))
+                    if (!_userPostService.PostExists(postEditVM.Id))
                     {
                         return NotFound();
                     }
@@ -183,7 +175,7 @@ namespace MvcApp.Areas.Users.Controllers
                 return NotFound();
             }
 
-            var post = _userPostServices.GetById(id.Value);
+            var post = _userPostService.GetById(id.Value);
             if(post.StatusId==(int)StatusesEnum.WaitingForApproval)
             {
                 return NotFound();
@@ -201,10 +193,10 @@ namespace MvcApp.Areas.Users.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var post = _userPostServices.GetById(id);
+            var post = _userPostService.GetById(id);
             if (post!=null)
             {
-                _userPostServices.Delete(post);
+                _userPostService.Delete(post);
             }
             
             return RedirectToAction(nameof(Index));

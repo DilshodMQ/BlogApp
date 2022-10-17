@@ -21,9 +21,9 @@ builder.Services.AddDbContext<MvcAppContext>(options => options.UseSqlServer(con
 builder.Services.AddDefaultIdentity<MvcAppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MvcAppContext>();
-builder.Services.AddTransient<IAdminPostServices, AdminPostServices>();
-builder.Services.AddTransient<IUserPostServices, UserPostServices>();
-builder.Services.AddTransient<IPostServices, PostServices>();
+builder.Services.AddTransient<IAdminPostService, AdminPostService>();
+builder.Services.AddTransient<IUserPostService, UserPostService>();
+builder.Services.AddTransient<IPostService, PostService>();
 
 var app = builder.Build();
 

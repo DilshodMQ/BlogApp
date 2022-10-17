@@ -13,23 +13,23 @@ namespace MvcApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class PostsController : Controller
     {
-        private IAdminPostServices _adminPostServices;
-        public PostsController(IAdminPostServices adminPostServices)
+        private IAdminPostService _adminPostService;
+        public PostsController(IAdminPostService adminPostService)
         {
 
-            _adminPostServices = adminPostServices;
+            _adminPostService = adminPostService;
 
         }
         public IActionResult Index()
         {
-            var posts = _adminPostServices.GetAll();
+            var posts = _adminPostService.GetAll();
 
             return View(posts);
         }
 
         public IActionResult Details(int id)
         {
-            var post = _adminPostServices.GetById(id);
+            var post = _adminPostService.GetById(id);
             if(post == null)
             {
                 return NotFound();
@@ -40,16 +40,16 @@ namespace MvcApp.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Approve(int id)
         {
-            var post=_adminPostServices.GetById(id);    
-            _adminPostServices.Approve(post);
+            var post=_adminPostService.GetById(id);    
+            _adminPostService.Approve(post);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult Reject(int id)
         {
-            var post = _adminPostServices.GetById(id);
-            _adminPostServices.Reject(post);
+            var post = _adminPostService.GetById(id);
+            _adminPostService.Reject(post);
             return RedirectToAction("Index");
         }
     }

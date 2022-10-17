@@ -6,17 +6,29 @@ namespace MvcApp.Controllers
 {
     public class PostsController : Controller
     {
-        private IPostServices _postServices;
+        private IPostService _postService;
 
-        public PostsController(IPostServices postServices)
+        public PostsController(IPostService postService)
         {
-            _postServices=postServices;
+            _postService=postService;
         }
 
         public IActionResult Index()
         {
-            var posts = _postServices.GetLastEight(); 
+            var posts = _postService.GetLastEight(); 
             return View(posts);
+        }
+
+        public IActionResult Details(int? id)
+        {
+            if(id== null)   
+                return NotFound();
+
+            var post = _postService.GetById(id.Value);
+            if (post == null)
+                return NotFound();
+
+            return View(post);
         }
     }
 }
