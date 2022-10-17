@@ -21,11 +21,7 @@ namespace MvcApp.Controllers
         public async Task <IActionResult> Index()
         {
 
-            var posts = await _context.Posts.Where(p => p.StatusId == 3).ToListAsync();
-            
-            var lastEight = posts.OrderByDescending(p => p.DateCreated).Take(8);
-
-            return View(lastEight);
+           return View();
         }
 
         public IActionResult Privacy()

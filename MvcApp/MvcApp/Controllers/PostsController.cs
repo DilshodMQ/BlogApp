@@ -1,21 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MvcApp.Data;
+using MvcApp.Services.Interfaces;
 
 namespace MvcApp.Controllers
 {
     public class PostsController : Controller
     {
-        private MvcAppContext _context;
+        private IPostService _postService;
 
-        public PostsController(MvcAppContext context)
+        public PostsController(IPostService postService)
         {
-            _context = context;
+            _postService=postService;
         }
 
         public IActionResult Index()
         {
-            var posts=_context.Posts.Where(p=>p.StatusId==3).ToList();  
+            var posts = _postService.GetLastEight(); 
             return View(posts);
+        }
+
+        public IActionResult Details(int? id)
+        {
+            if(id== null)   
+                return NotFound();
+
+            var post = _postService.GetById(id.Value);
+            if (post == null)
+                return NotFound();
+
+            return View(post);
         }
     }
 }
