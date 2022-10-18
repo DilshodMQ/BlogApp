@@ -2,15 +2,13 @@
 
 namespace MvcApp.Services.Interfaces
 {
-    public interface IUserPostService
+    public interface IUserPostService : IBasePostService
     {
         List<Post> GetByAuthorId(string authorId);
 
         Post Details(int id);
 
         Post AddPost(Post post);
-
-        Post GetById(int id);
 
         void EditPost(Post post);
 

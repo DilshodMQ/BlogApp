@@ -2,11 +2,9 @@
 
 namespace MvcApp.Services.Interfaces
 {
-    public interface IAdminPostService
+    public interface IAdminPostService : IBasePostService
     {
          List<Post> GetAll();
-
-         Post GetById(int id);
 
         void Approve(Post post);
 

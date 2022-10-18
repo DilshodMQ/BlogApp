@@ -23,7 +23,7 @@ builder.Services.AddDefaultIdentity<MvcAppUser>(options => options.SignIn.Requir
     .AddEntityFrameworkStores<MvcAppContext>();
 builder.Services.AddTransient<IAdminPostService, AdminPostService>();
 builder.Services.AddTransient<IUserPostService, UserPostService>();
-builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<IBlogPostService, BlogPostService>();
 
 var app = builder.Build();
 

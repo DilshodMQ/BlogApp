@@ -6,20 +6,11 @@ using NuGet.Versioning;
 
 namespace MvcApp.Services.Posts
 {
-    public class PostService : IPostService
+    public class BlogPostService : BasePostService, IBlogPostService
     {
-        private readonly MvcAppContext _context;
-
-        public PostService(MvcAppContext context)
+        public BlogPostService(MvcAppContext context): base(context)    
         {
-            _context = context;
-        }
-
-        public Post GetById(int id)
-        {
-            var post = _context.Posts.Include(p => p.Status)
-                .Include(p => p.Author).FirstOrDefault(p=>p.Id==id);
-            return post;
+          
         }
 
         public List<Post> GetLastEight()

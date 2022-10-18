@@ -2,27 +2,21 @@
 using MvcApp.Data;
 using MvcApp.Models;
 using MvcApp.Services.Interfaces;
+using MvcApp.Services.Posts;
 
 namespace MvcApp.Services.Admin
 {
-    public class AdminPostService : IAdminPostService
+    public class AdminPostService : BasePostService,IAdminPostService
     {
-        public MvcAppContext _context;
-
-        public AdminPostService(MvcAppContext context)
+        public AdminPostService(MvcAppContext context):base(context)
         {
-            _context = context;
+           
         }
 
         public List<Post> GetAll()
         {
             var posts = _context.Posts.Include(p=>p.Status).Where(p => p.StatusId != (int)Enums.StatusesEnum.Draft).ToList();
             return posts;
-        }
-        public Post GetById(int id)
-        {
-            var post = _context.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
-            return post;
         }
 
         public void Approve(Post post)
