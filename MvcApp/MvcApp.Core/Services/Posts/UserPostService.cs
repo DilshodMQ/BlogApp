@@ -12,6 +12,7 @@ namespace MvcApp.Services.Users
         {
            
         }
+
         public List<Post> GetByAuthorId (string authorId)
         {
             var authorPosts = _context.Posts.Include(p => p.Status).Where(p => p.AuthorId == authorId);

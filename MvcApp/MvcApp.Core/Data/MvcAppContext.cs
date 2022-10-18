@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MvcApp.Areas.Identity.Data;
 using MvcApp.Models;
+using MvcApp.Areas.Identity.Data;
 
 namespace MvcApp.Data;
 
