@@ -15,7 +15,7 @@ namespace MvcApp.Services.Posts
         }
         public Post GetById(int id)
         {
-            var post = _context.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
+            var post = _context.Posts.Include(p => p.Status).Include(p=>p.Author).FirstOrDefault(p => p.Id == id);
             return post;
         }
     }

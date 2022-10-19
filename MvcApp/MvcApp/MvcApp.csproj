@@ -20,4 +20,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MvcApp.Core\MvcApp.Core.csproj" />
+    <ProjectReference Include="..\MvcApp.Domain\MvcApp.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
